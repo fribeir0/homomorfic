@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  client:
+    build:
+      context: ./client
+    container_name: healthdata_client
+    env_file:
+      - .env
+    volumes:
+      - shared_keys:/app/keys
+      - shared_data:/app/data
+    depends_on:
+      - server
+    networks:
+      - healthnet
+    command: python client.py
+
+  server:
+    build:
+      context: ./server
+    container_name: healthdata_server
+    env_file:
+      - .env
+    volumes:
+      - shared_data:/app/data
+    networks:
+      - healthnet
+    command: python server.py
+
+volumes:
+  shared_keys:
+  shared_data:
+
+networks:
+  healthnet:
+    driver: bridge
